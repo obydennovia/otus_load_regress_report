@@ -48,8 +48,10 @@
 otus_load_regress_report/
 ├── grafana/
 │   └── provisioning/
-│       └── dashboards/
-│           └── dashboards.yaml # Конфигурация автоимпорта дашбордов
+│       ├── dashboards/
+│       │   └── dashboards.yaml # Конфигурация автоимпорта дашбордов
+│       └── datasources/
+│           └── datasources.yaml # Конфигурация автоимпорта подключения к InfluxDB
 ├── docker-compose.yml         # Конфигурация инфраструктуры (InfluxDB, Grafana)
 ├── dashboard.json             # Экспортированный дашборд Grafana с графиками регрессии
 ├── webtours_step_max.js       # Сценарий нагрузочного тестирования для k6
