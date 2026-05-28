@@ -48,6 +48,7 @@
 otus_load_regress_report/
 ├── docker-compose.yml         # Конфигурация инфраструктуры (InfluxDB, Grafana)
 ├── webtours_step_max.js       # Сценарий нагрузочного тестирования для k6
+├── webtours_users.json        # Пул тестовых учетных записей (логины и пароли пользователей)
 ├── compare_k6_metrics.js      # Скрипт на Node.js для анализа метрик и сборки отчета
 └── README.md                  # Документация проекта
 ```
