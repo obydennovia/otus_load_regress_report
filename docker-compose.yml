@@ -18,9 +18,11 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
-      # Пробрасываем конфигурацию провижнинга
+      # Автоимпорт подключения к базе данных (Data Source)
+      - ./grafana/provisioning/datasources/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
+      # Автоимпорт конфигурации дашбордов
       - ./grafana/provisioning/dashboards/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
-      # Пробрасываем сам файл дашборда
+      # Сам файл дашборда
       - ./dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json:ro
     depends_on:
       - influxdb
