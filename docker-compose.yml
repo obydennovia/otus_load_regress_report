@@ -1,0 +1,30 @@
+services:
+  # Хранилище метрик (Используем InfluxDB v1.8, как в ТЗ)
+  influxdb:
+    image: influxdb:1.8-alpine
+    container_name: influxdb_otus
+    ports:
+      - "8086:8086"
+    environment:
+      - INFLUXDB_DB=otus_webtours
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    restart: unless-stopped
+
+  # Визуализация Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_otus
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - influxdb
+    restart: unless-stopped
+
+volumes:
+  influxdb_data:
+  grafana_data:
