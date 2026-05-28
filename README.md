@@ -46,14 +46,17 @@
 ## 📂 Структура файлов проекта
 ```text
 otus_load_regress_report/
+├── grafana/
+│   └── provisioning/
+│       └── dashboards/
+│           └── dashboards.yaml # Конфигурация автоимпорта дашбордов
 ├── docker-compose.yml         # Конфигурация инфраструктуры (InfluxDB, Grafana)
+├── dashboard.json             # Экспортированный дашборд Grafana с графиками регрессии
 ├── webtours_step_max.js       # Сценарий нагрузочного тестирования для k6
 ├── webtours_users.json        # Пул тестовых учетных записей (логины и пароли пользователей)
 ├── compare_k6_metrics.js      # Скрипт на Node.js для анализа метрик и сборки отчета
 └── README.md                  # Документация проекта
 ```
-
----
 
 ## 🚀 Быстрый старт
 
@@ -62,7 +65,7 @@ otus_load_regress_report/
 ```bash
 docker compose up -d
 ```
-*База данных `otus_webtours` инициализируется в контейнере автоматически.*
+*База данных `otus_webtours` и дашборд со всеми настроенными графиками (из файла `dashboard.json`) инициализируются в контейнерах автоматически. Ручная настройка панелей в Grafana больше не требуется.*
 
 ### 2. Запуск нагрузочного теста (k6)
 Запустите скрипт тестирования для отправки метрик в поднятый контейнер InfluxDB.
@@ -77,22 +80,7 @@ k6 run --out influxdb=http://localhost:8086/otus_webtours webtours_step_max.js
 docker run --rm --network=host -i grafana/k6 run --out influxdb=http://localhost:8086/otus_webtours - <webtours_step_max.js
 ```
 
-### 📊 3. Настройка мониторинга в Grafana
-1. Откройте интерфейс: `http://localhost:3000` (Вход по умолчанию: `admin` / `admin`).
-2. Перейдите в **Connections** -> **Data Sources** -> **Add data source** -> **InfluxDB**.
-3. Укажите параметры подключения:
-   - **URL**: `http://influxdb:8086`
-   - **Database**: `otus_webtours`
-   - **HTTP Method**: `GET`
-4. Нажмите **Save & test**.
-5. Создайте панель **Time Series** со следующим InfluxQL-запросом для вывода перцентилей:
-   ```sql
-   SELECT percentile("value", 95) FROM "http_req_duration" WHERE "expected_response" = 'true' AND \(timeFilter GROUP BY time(\)__interval), "scenario", "group"
-   ```
-6. В поле **Alias by** снизу введите: `$tag_scenario | $tag_group`
-7. В правых настройках панели (**Graph styles**) найдите пункт **Connect null values** и переведите его в положение **Always**.
-
-### 📈 4. Анализ полученного графика нагрузки в Grafana
+### 📊 3. Анализ полученного графика нагрузки в Grafana
 
 После завершения теста на созданном графике отобразится динамика изменения 95-го перцентиля времени отклика (`http_req_duration`) по каждому сценарию. При анализе графика обращайте внимание на следующие ключевые маркеры:
 1. **Поиск точки излома (Ступени нагрузки):**
